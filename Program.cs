@@ -7,6 +7,8 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Net;
+
 
 namespace aspnetcoreapp
 {
@@ -19,7 +21,15 @@ namespace aspnetcoreapp
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .UseUrls("http://localhost:5001/");
+            .UseKestrel(options =>
+            {
+                // Configure the Url and ports to bind to
+                // This overrides calls to UseUrls and the ASPNETCORE_URLS environment variable, but will be 
+                // overridden if you call UseIisIntegration() and host behind IIS/IIS Express
+                options.Listen(IPAddress.Loopback, 5001);
+                
+            })
+                .UseStartup<Startup>();
+                //.UseUrls("https://localhost:5001/");
     }
 }
